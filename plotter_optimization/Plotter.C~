@@ -1,0 +1,228 @@
+{
+ ifstream infile;
+  infile.open("config/output_name.in");
+  if(!infile) {
+    std::cout << "could not open file config/output_name.in" <<std::endl;
+    exit(1);
+  }
+ int sig_counter = 0;
+  vector<string> name_vector(0);
+  while(!infile.eof()){
+    char name_i[100];
+    infile >> name_i;
+    name_vector.push_back(name_i);
+    sig_counter++;
+  }
+
+  ifstream input_files[sig_counter-1];
+  for(int k=0; k<=sig_counter-2;++k){
+  string chain = ("files/");
+  chain += name_vector.at(k);
+  char *name = new char[chain.length()+1];
+  std::strcpy(name, chain.c_str());
+  input_files[k].open(name);
+  }
+  
+  
+
+Double_t x[1000]={0}, y[1000]={0}, ex[1000]={0}, ey[1000]={0};                                                        //Declara arreglos
+Double_t dat1=0., dat2=0., dat3=0.;
+Int_t n=0;
+Int_t k=3,j=7,l=12, mm=16, nn=20;
+TList * allgraphs = new TList();
+
+for(int k=3; k<=3;++k){
+n=0;
+while(!input_files[k].eof()){                                                           //Ciclo hasta final del archivo
+input_files[k] >> dat1;                                                                    //Llenar arreglos con los datos
+input_files[k] >> dat2;
+input_files[k] >> dat3;
+x[n]=dat1;
+y[n]=dat2; 
+ex[n]=dat3;
+cout << n <<" "<< x[n] <<" "<< y[n] <<" "<< ex[n]<< " " << ey[n] <<endl;               //Muestra los 
+n++;
+}
+graphs = new TGraphErrors(n,x,y,ey,ex); 
+allgraphs->Add( graphs);
+}
+
+n=0;
+while(!input_files[j].eof()){                                                           //Ciclo hasta final del archivo
+input_files[j] >> dat1;                                                                    //Llenar arreglos con los datos
+input_files[j] >> dat2;
+input_files[j] >> dat3;
+x[n]=dat1;
+y[n]=dat2; 
+ex[n]=dat3;
+cout << n <<" "<< x[n] <<" "<< y[n] <<" "<< ex[n]<< " " << ey[n] <<endl;               //Muestra los 
+n++;
+}
+gr2=new TGraphErrors(n,x,y,ey,ex);
+allgraphs->Add( gr2 );
+n=0;
+while(!input_files[l].eof()){                                                           //Ciclo hasta final del archivo
+input_files[l] >> dat1;                                                                    //Llenar arreglos con los datos
+input_files[l] >> dat2;
+input_files[l] >> dat3;
+x[n]=dat1;
+y[n]=dat2; 
+ex[n]=dat3;
+cout << n <<" "<< x[n] <<" "<< y[n] <<" "<< ex[n]<< " " << ey[n] <<endl;               //Muestra los 
+n++;
+}
+gr3=new TGraphErrors(n,x,y,ey,ex);
+allgraphs->Add( gr3 );
+
+n=0;
+while(!input_files[mm].eof()){                                                           //Ciclo hasta final del archivo
+input_files[mm] >> dat1;                                                                    //Llenar arreglos con los datos
+input_files[mm] >> dat2;
+input_files[mm] >> dat3;
+x[n]=dat1;
+y[n]=dat2; 
+ex[n]=dat3;
+cout << n <<" "<< x[n] <<" "<< y[n] <<" "<< ex[n]<< " " << ey[n] <<endl;               //Muestra los 
+n++;
+}
+gr4=new TGraphErrors(n,x,y,ey,ex);
+allgraphs->Add( gr4 );
+
+n=0;
+while(!input_files[nn].eof()){                                                           //Ciclo hasta final del archivo
+input_files[nn] >> dat1;                                                                    //Llenar arreglos con los datos
+input_files[nn] >> dat2;
+input_files[nn] >> dat3;
+x[n]=dat1;
+y[n]=dat2; 
+ex[n]=dat3;
+cout << n <<" "<< x[n] <<" "<< y[n] <<" "<< ex[n]<< " " << ey[n] <<endl;               //Muestra los 
+n++;
+}
+gr5=new TGraphErrors(n,x,y,ey,ex);
+allgraphs->Add( gr5 );
+
+ 
+//Setup TCanvas
+TCanvas *c1=new TCanvas("c1","Significance",180,10,1000,600);                   
+c1->Range(0,0,1,1);
+c1->SetFillColor(0);
+c1->SetBorderMode(0);
+c1->SetBorderSize(2);
+c1->SetFrameBorderMode(0);
+c1->Divide(1,1);
+//Setup pad
+ 
+ TPad *c1_1 = new TPad("c1_1", "c1_1",0.01,0.01,0.99,0.99);
+   c1_1->Draw();
+   c1_1->cd();
+   c1_1->Range(-28.53875,0.006817153,223.7949,0.01827447);
+   c1_1->SetFillColor(0);
+   c1_1->SetBorderMode(0);
+   c1_1->SetBorderSize(2);
+   c1_1->SetLeftMargin(0.1130993);
+   c1_1->SetRightMargin(0.01503913);
+   c1_1->SetBottomMargin(0.1408311);
+   c1_1->SetFrameBorderMode(0);
+   c1_1->SetFrameBorderMode(0);
+
+//////////////////////////////////////////////////
+
+ c1_1->cd();//TGraph *gr1=new TGraph(n,x,y);     //Dibujar los datos
+//TGraphErrors *
+  int color[sig_counter]={1};
+  color[0] = 1;
+  color[1] = 2;
+  color[2] = 4;
+  color[3] = 3;
+  color[4] = 6;
+  
+ for(int k=0; k <= 4; ++k) {
+ if (k==0){
+ ((TGraph*)allgraphs->At(k))->SetMarkerStyle(20);
+ ((TGraph*)allgraphs->At(k))->SetMarkerSize(1.5);
+ ((TGraph*)allgraphs->At(k))->SetMarkerColor(color[k]);
+ ((TGraph*)allgraphs->At(k))->SetFillColor(0);
+ ((TGraph*)allgraphs->At(k))->SetFillStyle(0);
+ ((TGraph*)allgraphs->At(k))->SetMinimum(0.001);
+ ((TGraph*)allgraphs->At(k))->SetMaximum(40.0);
+ ((TGraph*)allgraphs->At(k))->Draw("AP"); 
+ ((TGraph*)allgraphs->At(k))->GetXaxis()->SetLimits(90, 220);
+ ((TGraph*)allgraphs->At(k))->SetTitle("Significance #tilde{#tau}-signals");
+ ((TGraph*)allgraphs->At(k))->GetXaxis()->SetTitle("p_{T}(#tau) [GeV]");
+ ((TGraph*)allgraphs->At(k))->GetXaxis()->SetTitleOffset(1);	
+ ((TGraph*)allgraphs->At(k))->GetXaxis()->SetTitleSize(0.05);	 
+ ((TGraph*)allgraphs->At(k))->GetYaxis()->SetTitle("#frac{S}{#sqrt{S+B}}");
+ ((TGraph*)allgraphs->At(k))->GetYaxis()->SetTitleOffset(1);
+ ((TGraph*)allgraphs->At(k))->GetYaxis()->SetTitleSize(0.05);
+ } else {
+ ((TGraph*)allgraphs->At(k))->SetMinimum(0.01);
+ ((TGraph*)allgraphs->At(k))->SetMaximum(10.);
+ ((TGraph*)allgraphs->At(k))->SetMarkerStyle(20);
+ ((TGraph*)allgraphs->At(k))->SetMarkerSize(1.5);
+ ((TGraph*)allgraphs->At(k))->SetMarkerColor(color[k]);
+ ((TGraph*)allgraphs->At(k))->SetFillColor(0);
+ ((TGraph*)allgraphs->At(k))->SetFillStyle(0);
+ if(k==3)((TGraph*)allgraphs->At(k))->Draw("P"); 
+ }   
+ }
+
+   TLegend *leg = new TLegend(0.8067359,0.6581543,0.9795305,0.8922585,NULL,"brNDC");
+   leg->SetBorderSize(1);
+   leg->SetTextFont(62);
+   leg->SetTextSize(0.06);
+   leg->SetLineColor(1);
+   leg->SetLineStyle(1);
+   leg->SetLineWidth(1);
+   leg->SetFillColor(0);
+   leg->SetHeader("LSP Mass");
+   //leg->SetFillStyle(1002);
+  leg->AddEntry(graphs, "080 GeV");
+ // leg->AddEntry(gr2, "170 GeV");
+ // leg->AddEntry(gr3, "270 GeV"); 
+  //leg->AddEntry(gr4, "360 GeV"); 
+ // leg->AddEntry(gr5, "450 GeV"); 
+  leg->Draw();
+//gr1=new TGraphErrors(n,x,y,ex,ey);     //Dibujar los datos
+//gr1->SetTitle("Significance-Signal (LSP: 250 GeV)");
+//gr1->SetTitle("Significance-Signal(LSP 150, s#tau 175, Chargino 200)");
+//gr1->SetTitle("Significance-Signal(LSP 150, s#tau 175, Chargino 200)");
+///////////////////////////////////////////////////////////////////////////
+//gr1->GetXaxis()->SetTitle("PT(#tau_{1}) [GeV]");
+//gr1->GetXaxis()->SetTitle("TauJet_Pt (GeV)");
+//gr1->GetXaxis()->SetTitle("M_{jj} (GeV)");
+//gr1->GetXaxis()->SetTitle("#Delta#eta");
+//gr1->GetXaxis()->SetLabelSize(0.04);
+//gr1->GetXaxis()->SetTitleOffset(1);						//Tamaño de los numeros
+//gr1->GetXaxis()->SetTitleSize(0.060);						//Tamaño del los labels
+///////////////////////////////////////////////////////////////////////////
+//gr1->GetYaxis()->SetTitle("#frac{S}{#sqrt{S+B}}");
+//gr1->GetYaxis()->SetLabelSize(0.04);
+//gr1->GetYaxis()->SetTitleOffset(0.85);	
+//gr1->GetYaxis()->SetTitleSize(0.060);
+///////////////////////////////////////////////////////////////////////////
+
+//gr1->SetMarkerStyle(20);
+//gr1->SetMarkerSize(1);
+//gr1->SetMarkerColor(4);
+//gr1->Draw("AP"); 
+//gr2->Draw("same");
+ c1->Update();
+TPaveText *pt = new TPaveText(0.2430776,0.9328105,0.7569224,0.995,"blNDC");
+   pt->SetName("title");
+   pt->SetBorderSize(0);
+   pt->SetFillColor(0);
+   pt->SetFillStyle(0);
+   pt->SetTextFont(42);
+   //TText *AText = pt->AddText("Significance-Signal(LSP 000, s#tau 050, Chargino 100)");
+   //TText *AText = pt->AddText("Significance-Signal(LSP 050, s#tau 295, Chargino 300)");
+   //TText *AText = pt->AddText("Significance-Signal(LSP 150, s#tau 165, Chargino 200)");
+   pt->Draw();
+   c1_1->Modified();
+   c1->cd();
+   c1->Modified();
+   c1->cd();
+   c1->SetSelected(c1);
+
+}
+

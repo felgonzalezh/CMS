@@ -1,0 +1,9 @@
+#include "map"
+#include "utility"
+#include "string"
+#ifdef __CINT__ 
+#pragma link C++ nestedclasses;
+#pragma link C++ nestedtypedefs;
+#pragma link C++ class allocator<pair<const double,string> >+;
+#pragma link C++ class allocator<pair<const double,string> >::*+;
+#endif

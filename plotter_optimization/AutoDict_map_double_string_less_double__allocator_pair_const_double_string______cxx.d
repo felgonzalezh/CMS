@@ -1,0 +1,4 @@
+
+# DO NOT DELETE
+AutoDict_map_double_string_less_double__allocator_pair_const_double_string______cxx.so: /usr/local/root/include/cintdictversion.h /usr/local/root/include/RVersion.h
+AutoDict_map_double_string_less_double__allocator_pair_const_double_string______cxx__ROOTBUILDVERSION= 5.34/36

@@ -1,0 +1,7 @@
+Luminosity: 34.87
+min_value: 50
+max_value: 60
+step: 5
+input_folder:data/TauPt/Pt_
+first_folder:NRecoTriggers1/Met
+second_folder:NRecoTau1/Met
