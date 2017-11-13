@@ -23,7 +23,7 @@
 using namespace std;
 
 vector<string> out_put;  
-string input = "data/fraction";
+string input = "/home/alejandro/CMS/data/data_muonastau/fraction";
 vector<string>  inputfolder;
 vector<string> folder;
 std::vector<string> Cut; 
@@ -39,8 +39,8 @@ void fill(){
   
   
   
-  inputfolder.push_back("pt_1");
-  inputfolder.push_back("pt_10");
+  inputfolder.push_back("");
+  inputfolder.push_back("");
   
   
   
@@ -66,6 +66,7 @@ void fill(){
   Histo.push_back("GenTauFractionR3");
   Histo.push_back("GenTauFractionR4");
   Histo.push_back("GenTauFractionR5");
+  Histo.push_back("GenTauFractionR6");
   Histo.push_back("GenTauIDRecoPt");
   Histo.push_back("GenTauIDPt");
   Histo.push_back("GenTauMatchedPt");
@@ -102,7 +103,7 @@ void generator(){
       file->cd(folder[j].c_str());
       
       
-      for(int k = 0; k<= 9; k++){
+      for(int k = 0; k< Histo.size(); k++){
         if((Histo[k] == "GenTauIDPt") || (Histo[k] == "GenHadTauPt")) continue;	
 
 	TH1F *h1 = (TH1F*)f1->Get((Cut[cut_position]+"/"+Histo[k]).c_str());
