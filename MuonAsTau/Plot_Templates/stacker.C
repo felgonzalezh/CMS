@@ -24,10 +24,12 @@ using namespace std;
 
 vector<string> in_put; 
 vector<string> folder;
-std::vector<string> Histo;
-std::vector<string> Histo2;
-std::vector<string> Cut;
-std::vector<double> xsec;
+vector<string> Histo;
+vector<string> Histo2;
+vector<string> Cut;
+vector<double> xsec;
+
+
 void fill(){
   
  // in_put.push_back("/home/alejandro/CMS/data/data_muonastau/tau_nomatch/");
@@ -45,7 +47,7 @@ void fill(){
   folder.push_back("WJetsToLNu_HT-800To1200");
   folder.push_back("WJetsToLNu_HT-1200To2500");
   folder.push_back("WJetsToLNu_HT-2500ToInf");
-  folder.push_back("salida"); 
+  
   
   xsec.push_back(1600.97);
   xsec.push_back(1632.53);
@@ -55,6 +57,7 @@ void fill(){
   xsec.push_back(6.67);
   xsec.push_back(1.61);
   xsec.push_back(0.039); 
+  
 
   Cut.push_back("NRecoTriggers1");
   Cut.push_back("NRecoTau1");
@@ -73,65 +76,117 @@ void fill(){
 }
 
 
-void run_plot(){
+void stacker(){
   
   cout << "working" << endl;
   fill();
 
-  
+  double lumi = 37.85; 
   bool  weight = true; 
+  int ww = 1;                   
+  if(weight) ww = 2; 
+
  
-  THStack *reco = new THStack("reco","");    
-  THStack *emu = new THStack("emu","");
-  THStack *wemu = new THStack("wemu",""); 
 
-  for(int i = 0; i<=8; i++){    //Over samples
-
-   int ww = 1;
-  
-   if(weight) ww = 2; 
-
-   TFile *f1 = TFile::Open((in_put[0]+folder[i]+".root").c_str(),"READ");
-   TFile *f2 = TFile::Open((in_put[ww]+folder[i]+".root").c_str(),"READ");
-   TFile *f3 = TFile::Open((in_put[3]+folder[i]+".root").c_str(),"READ");
-  
+  TH1F *h_1 = new TH1F("h_1","h_1", 100, 0, 500);
+  TH1F *h_2 = new TH1F("h_2","h_2", 100, 0, 500);
+  TH1F *h_3 = new TH1F("h_3","h_3", 100, 0, 500); 
+  TH1F *h_4 = new TH1F("h_4","h_4", 100, 0, 500);    
+  TH1F *h_5 = new TH1F("h_5","h_5", 100, 0, 500);
  
-   
+  ////////////////////////////
+  int k = 2;
+  int j = 3; 
 
-  for(int j = 0; j <= 3; j++){  // over cuts 
-   
-   if(j==2) continue;
-    
-   for(int k = 0; k <=3; k++){   // over histos
-
-  
   int index_muon = 0;
-  
   if (j==1) index_muon = j+1;
   else if ((j==0) || (j==3)) index_muon = j; 
   
+
+
+  for(int i = 0; i < folder.size(); i++){    //Over samples
+
+  // if(i  != 5 && i != 6 ) continue;
+   TFile *f1 = TFile::Open((in_put[0]+folder[i]+".root").c_str(),"READ");
+   TFile *f2 = TFile::Open((in_put[ww]+folder[i]+".root").c_str(),"READ");
+   TFile *f3 = TFile::Open((in_put[3]+folder[i]+".root").c_str(),"READ");
 
   TH1F *h3 = (TH1F*)f1->Get((Cut[j]+"/"+Histo[k]).c_str());  
   TH1F *h2 = (TH1F*)f2->Get((Cut[index_muon]+"/"+Histo2[k]).c_str()); 
   TH1F *h1 = (TH1F*)f3->Get((Cut[index_muon]+"/"+Histo2[k]).c_str());
 
-  
-
   double integral_1 = h1->Integral();
-  cout << "Reco tau events " << integral_1 <<endl;
-  if(integral_1 != 0){h1->Scale(1.0/integral_1);}
-  
   double integral_2 = h2->Integral();
-  cout << "Reco muon events " <<integral_2 <<endl;
-  if(integral_2 != 0){h2->Scale(1.0/integral_2);} 
-
   double integral_3 = h3->Integral();
-  cout << "Emulated tau events  " <<integral_3 <<endl;
- if(integral_3 != 0){h3->Scale(1.0/integral_3);} 
  
-  if(integral_2 != 0.)  cout << "efficiency "<< 100.0*integral_3/integral_2 << endl;
+  double scale1 = 1.0*lumi*xsec[i]/(integral_1);
+  double scale2 = 1.0*lumi*xsec[i]/(integral_2);
+  double scale3 = 1.0*lumi*xsec[i]/(integral_3);   
 
- TCanvas *c1 = new TCanvas("c1", "c1",245,158,756,727);
+   if(integral_1 != 0) h1->Scale(scale1);
+  else cout << "Empty Reco" << endl;
+  if(integral_2 != 0) h2->Scale(scale2);
+  else cout << "Empty EReco" << endl;
+  if(integral_3 != 0) h3->Scale(scale3);
+  else cout << "Empty E2Reco" << endl;
+
+  
+ 
+
+ 
+ h_1->Sumw2(); 
+ h_2->Sumw2(); 
+ h_3->Sumw2(); 
+ 
+
+ h_1->Add(h3);
+ h_2->Add(h2);
+ h_3->Add(h1);
+ 
+   
+}
+ 
+   h_1->SetTitle("");
+  h_1->SetStats(0);
+  h_1->SetFillColor(0);
+  h_1->SetFillStyle(0);
+
+   h_1->SetLineWidth(1); 
+   h_2->SetLineWidth(1); 
+   h_3->SetLineWidth(1); 
+
+   h_1->SetLineColor(4);
+   h_2->SetLineColor(2);
+   h_3->SetLineColor(1);
+
+
+
+ TH1F *clone1  = (TH1F*)h_1->Clone("clone1");
+ TH1F *clone2  = (TH1F*)h_2->Clone("clone2");  
+  TH1F *clone3  = (TH1F*)h_3->Clone("clone3");
+
+  clone1->Divide(clone3);
+  clone2->Divide(clone3);
+
+ h_4->Add(clone1);
+ h_5->Add(clone2);
+
+  h_4->SetTitle("");
+  h_4->SetStats(0);
+  h_4->SetFillColor(0);
+  h_4->SetFillStyle(0);
+
+   h_4->SetLineWidth(1); 
+   h_4->SetLineWidth(1); 
+   h_4->SetLineWidth(1); 
+
+   h_4->SetLineColor(4);
+   h_5->SetLineColor(2);
+  
+
+  
+
+   TCanvas *c1 = new TCanvas("c1", "c1",245,158,756,727);
   c1->Range(-20.38653,-0.005764521,153.3666,0.04198848);
   c1->SetFillColor(0);
   c1->SetBorderMode(0);
@@ -166,10 +221,13 @@ void run_plot(){
 
   pad1->cd();
 
+ 
+ 
   
 
-
+/*
   h1->SetTitle("");
+
   h1->SetFillColor(0);
   h1->SetFillStyle(0);
  
@@ -201,6 +259,7 @@ h1->GetXaxis()->SetTitle("Energy [GeV]");
   h1->GetYaxis()->SetTitle("a.u.");
   h1->GetYaxis()->SetTitleOffset(0.8);
   h1->GetYaxis()->SetTitleSize(0.05);
+
   h1->SetStats(kFALSE);
   h1->SetTitleSize(0.05);
 
@@ -215,15 +274,10 @@ h1->GetXaxis()->SetTitle("Energy [GeV]");
    h3->SetLineWidth(3); 
   }
 
+h3->SetLineColor(1);
+**/
 
- h2->Draw();
-       h1->Draw("same");
-  
-  
-  h3->SetLineColor(1);
-  h3->Draw("same");
  
-  
   TLegend *leg = new TLegend(0.5530504,0.7347826,0.9708223,0.9695652,NULL,"brNDC");
    leg->SetBorderSize(1);
    leg->SetTextFont(62);
@@ -234,60 +288,35 @@ h1->GetXaxis()->SetTitle("Energy [GeV]");
    leg->SetFillColor(0);
    leg->SetFillStyle(1001);
 
+
+  
+  
+  h_1->Draw();
+  h_2->Draw("same");
+  h_3->Draw("same");
+
+
  
-  leg->AddEntry(h3, "RECO #tau");
+  leg->AddEntry(h_3, "RECO #tau");
   if(weight == false){
-  leg->AddEntry(h2, "RECO #mu");
-  leg->AddEntry(h1, "Emulated RECO #tau");   
+  leg->AddEntry(h_2, "RECO #mu");
+  leg->AddEntry(h_1, "Emulated RECO #tau");   
    } 
   else {
-  leg->AddEntry(h2, "Weighted Emu RECO #tau");
-  leg->AddEntry(h1, "Unweighted Emu RECO #tau");   
+  leg->AddEntry(h_2, "Weighted Emu RECO #tau");
+  leg->AddEntry(h_1, "Unweighted Emu RECO #tau");   
   }
   leg->Draw();
+  
+
 
   pad1->Modified();
  
   pad2->cd();
-  TH1F *clone1  = (TH1F*)h1->Clone("clone1");
-  TH1F *clone_1  = (TH1F*)h2->Clone("clone_1");
   
-  TH1F *clone2  = (TH1F*)h3->Clone("clone2");
- 
-
-  clone1->Divide(clone2);
-  clone_1->Divide(clone2);
+  h_4->Draw();
+  h_5->Draw("same");
   
- 
-  
-
- 
-   clone1->SetStats(0);
-   clone1->SetFillColor(1);
-   clone1->SetFillStyle(3002);
-   clone1->SetMarkerStyle(7);
-   clone1->SetMarkerColor(2);
- //  clone1->SetLineColor(2);
-   clone1->GetYaxis()->SetTitle("Ratio(Emulated/Real)");
-   clone1->GetXaxis()->SetTitle("");
-   clone1->GetYaxis()->SetLabelFont(42);
-   clone1->GetYaxis()->SetLabelSize(0.07);
-   clone1->GetXaxis()->SetLabelSize(0.08);
-   clone1->GetYaxis()->SetTitleSize(0.08);
-   clone1->GetYaxis()->SetTitleOffset(0.45);
-   clone1->GetYaxis()->SetTitleFont(42);
-   
-   
- //  clone_1->SetLineColor(3);
-   clone_1->SetMarkerColor(4);
-   clone_1->SetFillColor(1);
-   clone_1->SetFillStyle(3001);
-   clone_1->SetMarkerStyle(7);
-
-   clone1->Draw("E2");
-
-   if(weight) clone_1->Draw("E2same");
-
   
    int xmin = 0;
   int xmax = 0;   
@@ -319,7 +348,7 @@ h1->GetXaxis()->SetTitle("Energy [GeV]");
 
     new_directory += Cut[j];
     new_directory += "/";
-    new_directory += folder[i];
+    new_directory += "salida";//folder[8];
      
    
      //option 1   
@@ -332,17 +361,5 @@ h1->GetXaxis()->SetTitle("Energy [GeV]");
 
 
     c1->SaveAs((new_directory+"/"+Histo[k]+".pdf").c_str());
-    delete clone1; 
-    delete clone_1;
-    delete clone2; 
-   
-    delete h1;
-    delete h2; 
-    delete h3;
-    delete c1;
-    }
-   }
-
-  }//loop over folders
-
+    
 }  

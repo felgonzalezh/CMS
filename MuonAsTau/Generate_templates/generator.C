@@ -66,7 +66,7 @@ void fill(){
   Histo.push_back("GenTauFractionR3");
   Histo.push_back("GenTauFractionR4");
   Histo.push_back("GenTauFractionR5");
-  Histo.push_back("GenTauFractionR6");
+  
   Histo.push_back("GenTauIDRecoPt");
   Histo.push_back("GenTauIDPt");
   Histo.push_back("GenTauMatchedPt");
