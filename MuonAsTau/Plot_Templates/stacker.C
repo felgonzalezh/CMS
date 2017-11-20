@@ -32,15 +32,15 @@ vector<double> xsec;
 
 void fill(){
   
- // in_put.push_back("/home/alejandro/CMS/data/data_muonastau/tau_nomatch/");
+  //in_put.push_back("/home/alejandro/CMS/data/data_muonastau/tau_nomatch/");
   in_put.push_back("/home/alejandro/CMS/data/data_muonastau/tau_match/");
   in_put.push_back("/home/alejandro/CMS/data/data_muonastau/muon/");
 
   in_put.push_back("/home/alejandro/CMS/data/data_muonastau/muonastau/method_2/effi/"); 
   in_put.push_back("/home/alejandro/CMS/data/data_muonastau/muonastau/method_2/non_effi/");
  	
-  folder.push_back("WJetsToLNu_HT-70To100"); 
-  folder.push_back("WJetsToLNu_HT-100To200");
+ // folder.push_back("WJetsToLNu_HT-70To100"); 
+ folder.push_back("WJetsToLNu_HT-100To200");
   folder.push_back("WJetsToLNu_HT-200To400");
   folder.push_back("WJetsToLNu_HT-400To600");
   folder.push_back("WJetsToLNu_HT-600To800");
@@ -96,7 +96,7 @@ void stacker(){
  
   ////////////////////////////
   int k = 2;
-  int j = 3; 
+  int j = 1; 
 
   int index_muon = 0;
   if (j==1) index_muon = j+1;
@@ -111,9 +111,9 @@ void stacker(){
    TFile *f2 = TFile::Open((in_put[ww]+folder[i]+".root").c_str(),"READ");
    TFile *f3 = TFile::Open((in_put[3]+folder[i]+".root").c_str(),"READ");
 
-  TH1F *h3 = (TH1F*)f1->Get((Cut[j]+"/"+Histo[k]).c_str());  
+  TH1F *h1 = (TH1F*)f1->Get((Cut[j]+"/"+Histo[k]).c_str());  
   TH1F *h2 = (TH1F*)f2->Get((Cut[index_muon]+"/"+Histo2[k]).c_str()); 
-  TH1F *h1 = (TH1F*)f3->Get((Cut[index_muon]+"/"+Histo2[k]).c_str());
+  TH1F *h3 = (TH1F*)f3->Get((Cut[index_muon]+"/"+Histo2[k]).c_str());
 
   double integral_1 = h1->Integral();
   double integral_2 = h2->Integral();
@@ -133,15 +133,15 @@ void stacker(){
   
  
 
- 
+ /*
  h_1->Sumw2(); 
  h_2->Sumw2(); 
  h_3->Sumw2(); 
- 
+ */
 
- h_1->Add(h3);
+ h_1->Add(h1);
  h_2->Add(h2);
- h_3->Add(h1);
+ h_3->Add(h3);
  
    
 }
@@ -152,12 +152,12 @@ void stacker(){
   h_1->SetFillStyle(0);
 
    h_1->SetLineWidth(1); 
-   h_2->SetLineWidth(1); 
+   h_2->SetLineWidth(2); 
    h_3->SetLineWidth(1); 
 
-   h_1->SetLineColor(4);
-   h_2->SetLineColor(2);
-   h_3->SetLineColor(1);
+   h_1->SetLineColor(1);
+   h_2->SetLineColor(4);
+   h_3->SetLineColor(2);
 
 
 
@@ -165,11 +165,11 @@ void stacker(){
  TH1F *clone2  = (TH1F*)h_2->Clone("clone2");  
   TH1F *clone3  = (TH1F*)h_3->Clone("clone3");
 
-  clone1->Divide(clone3);
-  clone2->Divide(clone3);
+  clone2->Divide(clone1);
+  clone3->Divide(clone1);
 
- h_4->Add(clone1);
- h_5->Add(clone2);
+ h_4->Add(clone2);
+ h_5->Add(clone3);
 
   h_4->SetTitle("");
   h_4->SetStats(0);
@@ -178,8 +178,10 @@ void stacker(){
 
    h_4->SetLineWidth(1); 
    h_4->SetLineWidth(1); 
-   h_4->SetLineWidth(1); 
-
+   h_4->SetLineWidth(2); 
+   
+h_5->SetLineWidth(1); 
+  
    h_4->SetLineColor(4);
    h_5->SetLineColor(2);
   
@@ -225,57 +227,57 @@ void stacker(){
  
   
 
-/*
-  h1->SetTitle("");
 
-  h1->SetFillColor(0);
-  h1->SetFillStyle(0);
+  h_1->SetTitle("");
+
+  h_1->SetFillColor(0);
+  h_1->SetFillStyle(0);
  
   if(Histo[k] == "Tau1Pt" || Histo[k] == "Muon1Pt" ) {
- 	h2->GetXaxis()->SetTitle("p_{T} [GeV]");
-  	h2->GetXaxis()->SetRangeUser(15.,45.);
-h1->GetXaxis()->SetTitle("p_{T} [GeV]");
-  	h1->GetXaxis()->SetRangeUser(15.,45.); 
+ 	h_2->GetXaxis()->SetTitle("p_{T} [GeV]");
+  	h_2->GetXaxis()->SetRangeUser(15.,45.);
+        h_1->GetXaxis()->SetTitle("p_{T} [GeV]");
+  	h_1->GetXaxis()->SetRangeUser(15.,45.); 
 	}
   if(Histo[k] == "Tau1Energy" || Histo[k] == "Muon1Energy" ) {
-   h2->GetXaxis()->SetTitle("Energy [GeV]");
-   h2->GetXaxis()->SetRangeUser(0., 200.);
-h1->GetXaxis()->SetTitle("Energy [GeV]");
-   h1->GetXaxis()->SetRangeUser(0., 200.);
+   h_2->GetXaxis()->SetTitle("Energy [GeV]");
+   h_2->GetXaxis()->SetRangeUser(0., 200.);
+   h_1->GetXaxis()->SetTitle("Energy [GeV]");
+   h_1->GetXaxis()->SetRangeUser(0., 200.);
    
    }
   else if(Histo[k] == "Tau1MetMt" || Histo[k] == "Muon1MetMt" ) { 
-       h2->GetXaxis()->SetTitle("m_{T} [GeV]"); 
-       h2->GetXaxis()->SetRangeUser(15., 350.);
-        h1->GetXaxis()->SetTitle("m_{T} [GeV]"); 
-       h1->GetXaxis()->SetRangeUser(15., 350.);
+       h_2->GetXaxis()->SetTitle("m_{T} [GeV]"); 
+       h_2->GetXaxis()->SetRangeUser(15., 250.);
+       h_1->GetXaxis()->SetTitle("m_{T} [GeV]"); 
+       h_1->GetXaxis()->SetRangeUser(15., 250.);
      
        }
-  else if (Histo[k] == "Met") h1->GetXaxis()->SetTitle("MET [GeV]");
+  else if (Histo[k] == "Met") h_1->GetXaxis()->SetTitle("MET [GeV]");
 
-  h1->GetXaxis()->SetTitleOffset(1);
-  h1->GetXaxis()->SetTitleSize(0.06);
-  h1->SetLineColor(2);
-  h1->GetYaxis()->SetTitle("a.u.");
-  h1->GetYaxis()->SetTitleOffset(0.8);
-  h1->GetYaxis()->SetTitleSize(0.05);
+  h_1->GetXaxis()->SetTitleOffset(1);
+  h_1->GetXaxis()->SetTitleSize(0.06);
+  h_1->SetLineColor(1);
+  h_1->GetYaxis()->SetTitle("a.u.");
+  h_1->GetYaxis()->SetTitleOffset(0.8);
+  h_1->GetYaxis()->SetTitleSize(0.05);
 
-  h1->SetStats(kFALSE);
-  h1->SetTitleSize(0.05);
+  h_1->SetStats(kFALSE);
+  h_1->SetTitleSize(0.05);
 
-  if(weight == false) { h2->SetLineColor(3);
-   h1->SetLineWidth(2); 
-   h2->SetLineWidth(1); 
-   h3->SetLineWidth(3); 
+  if(weight == false) { h_2->SetLineColor(3);
+   h_1->SetLineWidth(1); 
+   h_2->SetLineWidth(2); 
+   h_3->SetLineWidth(1); 
    }
-   else {h2->SetLineColor(4);
-   h1->SetLineWidth(2); 
-   h2->SetLineWidth(2); 
-   h3->SetLineWidth(3); 
+   else {h_2->SetLineColor(4);
+   h_1->SetLineWidth(1); 
+   h_2->SetLineWidth(2); 
+   h_3->SetLineWidth(1); 
   }
 
-h3->SetLineColor(1);
-**/
+  //h3->SetLineColor(1);
+
 
  
   TLegend *leg = new TLegend(0.5530504,0.7347826,0.9708223,0.9695652,NULL,"brNDC");
@@ -297,14 +299,14 @@ h3->SetLineColor(1);
 
 
  
-  leg->AddEntry(h_3, "RECO #tau");
+  leg->AddEntry(h_1, "RECO #tau");
   if(weight == false){
   leg->AddEntry(h_2, "RECO #mu");
-  leg->AddEntry(h_1, "Emulated RECO #tau");   
+  leg->AddEntry(h_3, "Emulated RECO #tau");   
    } 
   else {
   leg->AddEntry(h_2, "Weighted Emu RECO #tau");
-  leg->AddEntry(h_1, "Unweighted Emu RECO #tau");   
+  leg->AddEntry(h_3, "Unweighted Emu RECO #tau");   
   }
   leg->Draw();
   
@@ -314,9 +316,16 @@ h3->SetLineColor(1);
  
   pad2->cd();
   
-  h_4->Draw();
-  h_5->Draw("same");
+
+  h_5->GetYaxis()->SetLabelSize(0.1);
+  h_5->GetXaxis()->SetLabelSize(0.1);
+  h_5->SetStats(kFALSE);
+  h_5->GetXaxis()->SetRangeUser(15., 250.);
+ // h_4->GetYaxis()->SetRangeUser(0., 2.);
+  h_5->SetTitle("");
   
+  h_5->Draw();
+  h_4->Draw("same"); 
   
    int xmin = 0;
   int xmax = 0;   
