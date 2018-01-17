@@ -175,13 +175,9 @@ void setTDRStyle(){
 
 void fill(){
 
-input_Data.push_back("/home/alejandro/CMS/data/data_plot/Tau/allData");
+input_Data.push_back("/home/alejandro/CMS/data/data_plot/unit/EW+Jets");
 
-input_MC.push_back("/home/alejandro/CMS/data/data_plot/Tau/VV");
-input_MC.push_back("/home/alejandro/CMS/data/data_plot/Tau/DY+Jets");
-input_MC.push_back("/home/alejandro/CMS/data/data_plot/Tau/tt");
-
-input_MC.push_back("/home/alejandro/CMS/data/data_plot/ETau/W+Jets");
+input_MC.push_back("/home/alejandro/CMS/data/data_plot/unit/W+Jets");
 
   Cut.push_back("NRecoTriggers1");
   Cut.push_back("NRecoTau1");
@@ -196,16 +192,14 @@ input_MC.push_back("/home/alejandro/CMS/data/data_plot/ETau/W+Jets");
   Histo2.push_back("Muon1MetMt");
   Histo2.push_back("Met");
  
-  legend.push_back("VV");
-  legend.push_back("DY+Jets");
-  legend.push_back("t#bar{t}");
+  
   legend.push_back("W+Jets");
   
     
 }
 
 
-void Plotter_1(){
+void Plotter_2(){
 cout << "working" << endl;
 fill();
 //setTDRStyle();
@@ -217,21 +211,26 @@ fill();
   Mc[i] = f;
   }
 
-  int j = 3;  //cut
+  int j = 2;  //cut
   int k = 1;  //histo
  
  
-  TH1F *h1 = (TH1F*)Data->Get((Cut[j]+"/"+Histo[k]).c_str()); 
-  h1->GetXaxis()->SetRangeUser(15., 250.);
+  TH1F *h1 = (TH1F*)Data->Get((Cut[j]+"/"+Histo2[k]).c_str()); 
   h1->Sumw2();
+  double integral = h1->Integral();
+  h1->Scale(1.0/integral);
+  h1->GetXaxis()->SetRangeUser(15., 250.);
+  h1->GetYaxis()->SetRangeUser(0.0001, 0.1);
 
+  double integral_1 = 1.0;
   TH1F* Mc_histos[100];
   for(int i = 0; i < input_MC.size(); i++){
   TH1F* h;
-  if(i!=3) h = (TH1F*)Mc[i]->Get((Cut[j]+"/"+Histo[k]).c_str()); 
-  else h = (TH1F*)Mc[i]->Get((Cut[j]+"/"+Histo2[k]).c_str()); 
-  h->SetLineColor(i+3);
-  h->SetFillColor(i+3);
+  h = (TH1F*)Mc[i]->Get((Cut[j]+"/"+Histo[k]).c_str()); 
+  integral_1 = h->Integral();
+  h->Scale(1.0/integral_1);
+  h->SetLineColor(9);
+  h->SetFillColor(9);
   h->GetXaxis()->SetRangeUser(15., 250.);
   h->Sumw2();
   Mc_histos[i] = h;
@@ -268,9 +267,10 @@ TPad *pad1 = new TPad("pad1", "pad1",0.0,0.3,1.0,1.0);
 
 
 hs->Draw("HIST");
-hs->GetYaxis()->SetTitle("Events");
+hs->GetYaxis()->SetTitle("a.u.");
 
  h1->GetXaxis()->SetRangeUser(15., 250.);
+ h1->GetYaxis()->SetRangeUser(0.0001, 0.1);
  h1->SetLineColor(1);
  h1->SetMarkerStyle(20);
  h1->SetMarkerSize(1.1);
@@ -288,7 +288,7 @@ TLegend *leg_massZprime = new TLegend(0.57, 0.68, 0.69, 0.88);
   leg_massZprime->SetTextSize(0.025);
   leg_massZprime->Draw();
    
-  leg_massZprime->AddEntry(h1,"Data","L");
+  leg_massZprime->AddEntry(h1,"Emulated W+Jets","L");
   for(int i = 0; i < input_MC.size(); i++){
   leg_massZprime->AddEntry(Mc_histos[i],legend[i].c_str(),"f");
   }
@@ -315,7 +315,7 @@ TLegend *leg_massZprime = new TLegend(0.57, 0.68, 0.69, 0.88);
  Data_1->GetYaxis()->SetTitleOffset(0.5);
  Data_1->GetYaxis()->SetTitleSize(0.08);
  Data_1->GetYaxis()->SetLabelSize(0.1);  
- Data_1->GetYaxis()->SetTitle("#frac{DATA}{MC}");
+ Data_1->GetYaxis()->SetTitle("#frac{Emulated}{Real}");
  
  Data_1->SetLineColor(1);
  Data_1->SetMarkerStyle(20);
