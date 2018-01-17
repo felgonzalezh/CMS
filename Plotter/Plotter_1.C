@@ -206,7 +206,7 @@ input_MC.push_back("/home/alejandro/CMS/data/data_plot/Single_muon/W+Jets");
 }
 
 
-void Plotter_rebin(){
+void Plotter_1(){
 cout << "working" << endl;
 fill();
 //setTDRStyle();
