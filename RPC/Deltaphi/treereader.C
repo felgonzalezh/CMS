@@ -18,7 +18,7 @@ void treereader(){
   c1->SetFrameBorderMode(0);
   
 
-auto f = new TFile("BDT_trainning_LUT_20.root");
+auto f = new TFile("BDT_training.root");
 auto T = (TTree*)f->Get("demo/tree");
 
    T->Draw("Muon_pt");
@@ -37,17 +37,17 @@ auto T = (TTree*)f->Get("demo/tree");
 // T->Scan();
 
 //Create Histogram
-int xmin = 0;
-int xmax = 4;
-int bins = 80;
+int xmin = -1;
+int xmax = 2;
+int bins = 40;
 
-int station = 1;
-bool digis = false; 
+int station = 2;
+bool digis = true; 
 
 if(digis) {
-xmin =  0;
-xmax = 60;
-bins = 100;
+xmin =  -10;
+xmax = 20;
+bins = 30;
 }
 
 TH1F *h1 = new TH1F("h1","hist from tree",bins, xmin, xmax);

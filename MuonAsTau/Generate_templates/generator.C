@@ -52,7 +52,7 @@ void fill(){
   folder.push_back("WJetsToLNu_HT-800To1200");
   folder.push_back("WJetsToLNu_HT-1200To2500");
   folder.push_back("WJetsToLNu_HT-2500ToInf"); 
- 
+  folder.push_back("NoWJets"); 
   
   Cut.push_back("NRecoTriggers1");
   Cut.push_back("NRecoTau1");
@@ -89,7 +89,7 @@ void generator(){
     
     cout << out_put[i]  << endl;
      
-    for(int j = 0; j<= 7; j++){
+    for(int j = 0; j<= 8; j++){
       TFile *f1 = TFile::Open((input+"/"+inputfolder[i]+"/"+folder[j]+".root").c_str(),"READ");
       cout << folder[j] << endl;
       if (f1 == 0) {
@@ -115,7 +115,11 @@ void generator(){
 	  h1->Write();  
 	
 	}
-        
+
+
+
+
+
         else {
         double integral = h1->Integral();
         if(integral !=0.) h1->Scale(1.0/integral);
